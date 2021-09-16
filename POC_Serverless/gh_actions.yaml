@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [closed]
 
-jobs:
+jobs:  
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
@@ -16,7 +16,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-      
+
         
     - name: Set up gcloud Cloud SDK environment
       env:
@@ -28,6 +28,8 @@ jobs:
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           project_id: ${{ secrets.PUBSUB_PROJECT }}
           export_default_credentials: true
-          
+
     - run: |-
-        gcloud pubsub topics publish notifications. --message "${{ github.event.pull_request.user.login }} requests access to GCE VM" --attribute="requestor=${{ github.event.pull_request.user.login }},project_id=${{ secrets.PUBSUB_PROJECT }},member=user:mir.misbahuddin@sourcedgroup.com,role=projects/golang-misbah/roles/boppermisbah"
+        gcloud components install beta 
+        gcloud beta workflows deploy ${{ github.event.pull_request.user.login }}-BG --location us-central1 --source .github/workflows/cloud-wf.yaml --quiet
+        gcloud workflows execute ${{ github.event.pull_request.user.login }}-BG --data='{"instance":"${{ github.event.pull_request.user.login }}34","project":"golang-misbah03","zone":"us-central1-a","user_role_title":"${{ github.event.pull_request.user.login }}test_role28","role_id":"test_role28"}'
