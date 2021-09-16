@@ -34,3 +34,44 @@ Cloud Workflows defines a series of step definitions in a sequential manner, but
  
 ![workflows diagram (1)](https://user-images.githubusercontent.com/53059374/133540672-6f94117f-8239-4b9b-ad5c-c71ee525fd7e.jpg)
 
+# GitHub Actions
+
+A control git repository was created which was then utilized as an entry point for the break glass initialization process. A GitHub Actions workflows was created with assistance from  which would get triggered on pull request being merged to main/master branch.  
+
+```
+name: 'Workflows'
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:  
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up gcloud Cloud SDK environment
+      env:
+       PROJECT_ID: ${{ secrets.PROJECT_ID }}
+       GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+  
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          project_id: ${{ secrets.PROJECT_ID }}
+          export_default_credentials: true
+
+    - run: |-
+        gcloud components install beta 
+        gcloud beta workflows deploy ${{ github.event.pull_request.user.login }}-BG --location us-central1 --source .github/workflows/cloud-wf.yaml --quiet
+        gcloud workflows execute ${{ github.event.pull_request.user.login }}-BG --data='{"machinetype":"e2-small","instance":"${{ github.event.pull_request.user.login }}-instance","project":"workflow-demo","zone":"us-central1-a","user_role_title":"${{ github.event.pull_request.user.login }}_BG_role","role_id":"bg_role","serviceaccount":"serviceAccount:misbah-sa-01@golang-misbah03.iam.gserviceaccount.com"}'
+
+```
