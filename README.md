@@ -75,3 +75,31 @@ jobs:
         gcloud workflows execute ${{ github.event.pull_request.user.login }}-BG --data='{"machinetype":"e2-small","instance":"${{ github.event.pull_request.user.login }}-instance","project":"workflow-demo","zone":"us-central1-a","user_role_title":"${{ github.event.pull_request.user.login }}_BG_role","role_id":"bg_role","serviceaccount":"serviceAccount:misbah-sa-01@golang-misbah03.iam.gserviceaccount.com"}'
 
 ```
+
+Once the gcloud SDK environment is setup, cloud workflows yaml file (cloud-wf.yaml) with all the steps declared in it  resides in another repository gets deployed. It is then executed using gcloud workflows execute command. The variables can be sent using the --data flag while executing the cloud workflow and then later utilized as global parameters in Workflows .yaml file.  
+
+# Workflow Steps
+
+A workflow is made up of a series of steps declared using the Workflows syntax, which can be written in either the YAML or JSON format. The workflows yaml file deployed and executed in the GitHub actions has multiple steps which were created using GCP workflow connectors to provision resources. Workflow connectors are pre-defined snippets that provision and connect with GCP resources.
+
+Workflow Connectors: https://github.com/GoogleCloudPlatform/workflows-samples/tree/main/src/connectors
+
+# Global Parameters
+
+We assigned global parameters in our main workflow under init. These parameters can be passed in each workflow step as needed.
+
+```
+main:
+    params: [args]
+
+    steps:
+    - init: 
+        assign:
+        - project: ${args.project}
+        - zone: ${args.zone}
+        - machineType: ${args.machinetype}
+        - instanceName: ${args.instance}
+        - serviceAccount: ${args.serviceaccount}
+        - role_id: ${args.role_id}
+        - role_title: ${args.user_role_title}
+ ```
