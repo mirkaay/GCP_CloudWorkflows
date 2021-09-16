@@ -167,17 +167,17 @@ Cloud Build can be triggered by REST API. Creating an IAM role binding step was 
 
 The Cloud Build service account needs following permissions to fulfill the stated objective.
 
-**resourcemanager.projects.getIamPolicy
+**resourcemanager.projects.getIamPolicy**
 
-**resourcemanager.projects.setIamPolicy 
+**resourcemanager.projects.setIamPolicy** 
 
-**cloudbuild.builds.create
+**cloudbuild.builds.create**
 
-**cloudbuild.builds.get
+**cloudbuild.builds.get**
 
-**cloudbuild.builds.list
+**cloudbuild.builds.list**
 
-**cloudbuild.builds.update
+**cloudbuild.builds.update**
 
 ```
 CloudBuildCreate:
