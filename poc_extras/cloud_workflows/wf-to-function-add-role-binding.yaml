@@ -1,0 +1,21 @@
+main:
+    params: [args]
+    
+### Assign global parameters
+
+    steps:
+    - call_function:
+        call: http.post
+        args:
+            url: "https://us-central1-golang-misbah03.cloudfunctions.net/part-wf"
+            body: {
+                "project": "golang-misbah03",
+                "zone": "us-central1-a",
+                "role": "projects/golang-misbah03/roles/boppiemisbah01",
+                "member": "serviceAccount:misbah-sa-01@golang-misbah03.iam.gserviceaccount.com",
+                "description": "add-iam-role-binding"
+            }
+        result: resp
+    - ReturnedValue:
+        return: ${resp}
+

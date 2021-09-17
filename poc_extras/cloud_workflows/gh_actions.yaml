@@ -1,0 +1,36 @@
+name: 'Workflows'
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:  
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+        
+    - name: Set up gcloud Cloud SDK environment
+      env:
+       PROJECT_ID: ${{ secrets.PUBSUB_PROJECT }}
+       GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+  
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          project_id: ${{ secrets.PUBSUB_PROJECT }}
+          export_default_credentials: true
+
+    - run: |-
+        gcloud components install beta 
+        gcloud beta workflows deploy ${{ github.event.pull_request.user.login }}-BG --location us-central1 --source .github/workflows/cloud-wf.yaml --quiet
+        gcloud workflows execute ${{ github.event.pull_request.user.login }}-BG --data='{"instance":"${{ github.event.pull_request.user.login }}34","project":"golang-misbah03","zone":"us-central1-a","user_role_title":"${{ github.event.pull_request.user.login }}test_role28","role_id":"test_role28"}'
+

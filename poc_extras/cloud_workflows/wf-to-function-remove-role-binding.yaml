@@ -1,0 +1,16 @@
+main:
+    params: [args]
+    steps:
+    - call_delete_function:
+        call: http.delete
+        args:
+            url: "https://us-central1-golang-misbah03.cloudfunctions.net/part2-delete-role01"
+            body: {
+                "project": "golang-misbah03",
+                "zone": "us-central1-a",
+                "role": "projects/golang-misbah03/roles/test_role11",
+                "member": "serviceAccount:misbah-sa-02@golang-misbah03.iam.gserviceaccount.com",
+                "description": "remove-iam-role-binding"
+            }
+        result: resp
+

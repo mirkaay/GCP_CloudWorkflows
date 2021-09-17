@@ -1,0 +1,13 @@
+- init:
+    assign:
+    - base64Data: "aGVsbG8="
+- pull_message:
+    call: googleapis.pubsub.v1.projects.subscriptions.pull
+    args:
+      subscription: "projects/golang-misbah03/subscriptions/add-member"
+      body:
+        maxMessages: 1
+    result: result
+- check_message:
+    return: ${result.receivedMessages[0].message.attributes}
+

@@ -1,0 +1,24 @@
+main:
+    params: []
+    steps:
+    - init:
+        assign:
+        - project_id: ${sys.get_env("golang-misbah03")}
+        - location_id: "us-central1"
+        - job_id: "dummy-job-id"
+        - topic_id: "add-member"  # Pubsub topic used by Cloud Scheduler as a notification target.
+        - subscription: "add-member"
+    - create_job:
+        call: googleapis.cloudscheduler.v1.projects.locations.jobs.create
+        args:
+          parent: "projects/golang-misbah03/locations/us-central1"
+          body:
+            name: "projects/golang-misbah03/locations/us-central1/jobs/dummy-job"
+            description: "A dummy job created by connector_cloudscheduler.yaml workflow to test the Cloud Scheduler connector."
+            schedule: "* * * * *"
+            pubsubTarget:
+              topicName: "projects/golang-misbah03/topics/add-member"
+              attributes:
+                job: "finished!"
+    - the_end:
+        return: "SUCCESS"

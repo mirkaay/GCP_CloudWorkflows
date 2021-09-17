@@ -1,0 +1,41 @@
+name: 'functions_pubsub'
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H:%M:%S')"
+      # run: echo "::set-output name=date::$(date -d '+ 5 minutes'  '+%FT%T.000Z')"
+        
+    - name: Set up gcloud Cloud SDK environment
+      env:
+       PROJECT_ID: ${{ secrets.PUBSUB_PROJECT }}
+       GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+  
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          project_id: ${{ secrets.PUBSUB_PROJECT }}
+          export_default_credentials: true
+          
+    - run: |-
+        gcloud pubsub topics publish notifications. --message "${{ github.event.pull_request.user.login }} requests access to GCE VM" --attribute="requestor=${{ github.event.pull_request.user.login }},project_id=${{ secrets.PUBSUB_PROJECT }},member=user:mir.misbahuddin@sourcedgroup.com,role=projects/golang-misbah/roles/boppermisbah"
+        # gcloud pubsub topics publish notifications. --message "${{ github.event.pull_request.user.login }} requests access to GCE VM" --attribute="requestor=${{ github.event.pull_request.user.login }},email=${{ github.event.pull_request.user.login }}@sourcedgroup.com, requested_components=hotel_bopper"   
+        # gcloud projects add-iam-policy-binding golang-misbah --member='user:mir.misbahuddin@sourcedgroup.com' --role='projects/golang-misbah/roles/hotel_bopper' --condition='expression=request.time < timestamp("'${{ steps.date.outputs.date }}'"),title=expires_end_of_2021,description=Expires at midnight on 2021-12-31'
+        # gcloud projects add-iam-policy-binding golang-misbah --member='user:mir.misbahuddin@sourcedgroup.com' --role='projects/golang-misbah/roles/hotel_bopper'
+

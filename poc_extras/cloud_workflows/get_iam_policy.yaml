@@ -1,0 +1,19 @@
+main:
+    params: [args]
+
+    steps:
+    - RoleBinding:
+            call: http.post
+            args:
+              url: https://cloudresourcemanager.googleapis.com/v1/projects/golang-misbah03:getIamPolicy
+              auth:
+                type: OAuth2
+              body: {
+                "options": {
+                "requestedPolicyVersion": 1
+                }
+              }
+            result: result
+    - ReturnedValue:
+            return: ${result}
+
