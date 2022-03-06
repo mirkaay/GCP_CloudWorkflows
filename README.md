@@ -1,6 +1,6 @@
 # Going Serverless with Cloud Workflows
 
-This post leans on achieving the objective of providing a user access to a newly created VM and IAM role for a certain amount of time and then tearing them down.
+This post leans on the achieving the objective of providing a user access to a newly created VM and IAM role for a certain amount of time and then tearing them down.
 
 The process involves following steps to achieve the stated goal:
 
